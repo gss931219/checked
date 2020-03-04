@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全选，全不选，反选</title>
+    <style>
+        [v-cloak]{
+            display: none;
+        }
+        .box{
+            width: 100px;
+            height: 100px;
+            background-color: #000fff;
+            position: absolute;
+            z-index: 1;
+            left: 0px;
+            top:0px;
+        }
+        .box.active{
+            background-color: #ff0000;
+        }
+        .address li.active{ background-color: #fff000;margin-bottom: 10px;}
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <input type="text" v-model="value"/>
+       <button type="button" @click="getData()">添加</button>
+    <table cellpadding="0" border cellspacing="0" width="100%">
+        <tr style="background-color: #000fff;height: 30px;">
+            <td style="text-align: center">
+                <input type="checkbox" @click="allChecked()"  :checked ="isAll" />全选
+            </td>
+            <td style="text-align: center">
+                管理
+            </td>
+            <td style="text-align: center">
+                操作
+            </td>
+        </tr>
+        <tr v-for="(item,index) in list" :key="index" style="height: 30px;">
+            <td style="text-align: center">
+                <input type="checkbox" @click="selectItem(index)" :checked="item.checked" />
+            </td>
+            <td style="text-align: center">
+                 {{item.title}}
+            </td>
+            <td style="text-align: center">
+                <button type="button" @click="delDate(index)">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<script src="js/vue.js"></script>
+<script>
+    new Vue({
+        el:"#app",
+        data(){
+            return {
+                value:"",
+                list:[],
+                isAll:false,
+            }
+        },
+        methods:{
+            //添加数据到表格中
+            getData(){
+                if(this.value.match(/^\s*$/)){
+                    alert("不能为空")
+                    return;
+                }
+                this.list.push({title:this.value,checked:false})
+            },
+            //删除数据
+            delDate(index){
+                console.log(index)
+                if(confirm("您确定要删除吗？")){
+                    this.list.splice(index,1)
+                }
+            },
+            allChecked(){
+                this.isAll= !this.isAll
+                if(this.list.length>0){
+                    for(let i = 0 ; i<this.list.length;i++){
+                        this.list[i].checked = this.isAll
+                    }
+                }
+            },
+            selectItem(index){
+                console.log(index)
+            //    如果单选未选中，全选不选
+                if(this.list.length>0){
+                    var isAll= true;
+                    this.list[index].checked =!this.list[index].checked
+                    console.log(this.list[index].checked)
+                    this.$set(this.list,index,this.list[index])
+                    for( let i=0;i<this.list.length;i++){
+                       if(!this.list[i].checked){
+                           isAll = false;
+                           break;
+                       }
+                    }
+                    this.isAll=isAll
+                }
+
+
+
+            }
+
+        }
+
+    })
+</script>
+</body>
+</html>
